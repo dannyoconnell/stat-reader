@@ -39,6 +39,14 @@ st.sidebar.header("Configuration")
 sheet_url = st.sidebar.text_input("Google Sheet URL or ID", 
                                   help="Paste the full URL of your Google Sheet or its ID here.")
 
+# DEBUG: Show what secrets Streamlit actually sees
+with st.sidebar.expander("Debug Info (Temporary)"):
+    try:
+        st.write("Loaded Secret Keys:")
+        st.write(list(st.secrets.keys()))
+    except Exception as e:
+        st.write(f"Error reading secrets: {e}")
+
 # Main app layout
 game_name = st.selectbox("Select Game", 
                          ["Rocket League", "Overwatch", "Valorant", "League of Legends"])

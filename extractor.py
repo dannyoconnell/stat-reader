@@ -7,9 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Configure Gemini API client
-# Assuming the user provides GEMINI_API_KEY in the .env file
-client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
+# Assuming the user provides GEMINI_API_KEY in the .env file or Streamlit Secrets
 
 def extract_scoreboard(image_path, game_name):
     """
@@ -47,6 +45,9 @@ def extract_scoreboard(image_path, game_name):
     """
     
     try:
+        # Initialize client here to prevent app crash if API key is missing on startup
+        client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
+        
         response = client.models.generate_content(
             model='gemini-2.5-flash',
             contents=[prompt, img]

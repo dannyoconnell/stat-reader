@@ -1,6 +1,8 @@
 import os
 import json
+# pyrefly: ignore [missing-import]
 from google import genai
+# pyrefly: ignore [missing-import]
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -17,6 +19,7 @@ def extract_scoreboard(image_path, game_name):
     
     # Upload the file to Gemini to get a File object
     # Or we can just pass the PIL Image object directly to generate_content
+    # pyrefly: ignore [missing-import]
     import PIL.Image
     img = PIL.Image.open(image_path)
     

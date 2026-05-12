@@ -7,7 +7,16 @@ from sheets import upload_stats, get_worksheet_names
 from dotenv import load_dotenv
 
 # Load environment variables
+# Load environment variables (for local development)
 load_dotenv()
+
+# Ensure Streamlit secrets are pushed to os.environ for our backend scripts (for cloud deployment)
+try:
+    for key, value in st.secrets.items():
+        if isinstance(value, str):
+            os.environ[key] = value
+except Exception:
+    pass
 
 st.set_page_config(page_title="Broadcast Stat Reader", page_icon="📊", layout="wide")
 
@@ -16,10 +25,14 @@ st.write("Upload a post-game scoreboard screenshot to extract player stats and s
 
 # Setup validation
 if not os.environ.get("GEMINI_API_KEY"):
-    st.warning("⚠️ GEMINI_API_KEY is not set in the .env file. Image extraction will not work.")
+    st.warning("⚠️ GEMINI_API_KEY is not set in your environment or secrets. Image extraction will not work.")
     
-if not os.environ.get("GOOGLE_APPLICATION_CREDENTIALS") or not os.path.exists(os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "")):
-    st.warning("⚠️ GOOGLE_APPLICATION_CREDENTIALS is not set or file doesn't exist. Sheets upload will fail.")
+# Check for either the JSON string (Cloud) OR the file path (Local)
+has_json_str = bool(os.environ.get("GOOGLE_CREDENTIALS_JSON"))
+has_file_path = bool(os.environ.get("GOOGLE_APPLICATION_CREDENTIALS") and os.path.exists(os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "")))
+
+if not has_json_str and not has_file_path:
+    st.warning("⚠️ Neither GOOGLE_CREDENTIALS_JSON nor a valid GOOGLE_APPLICATION_CREDENTIALS file were found. Sheets upload will fail.")
 
 # Sidebar for Configuration
 st.sidebar.header("Configuration")
